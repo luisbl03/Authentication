@@ -3,7 +3,7 @@ import json
 
 class AuthService:
     def __init__(self):
-        self.users = json.loads(open('users/users.json').read())
+        self.users = json.loads(open('../users/users.json').read())
     
     def get_user(self, id) -> Dict:
         for user in self.users:
