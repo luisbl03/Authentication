@@ -1,14 +1,16 @@
-from hashlib import sha256
 import uuid
 from typing import List
 
 class User:
-    def __init__(self, username:str, password:str, role:List[str]):
+    def __init__(self, username:str, password:str, role:List[str], id:str | None):
         self.__username__ = username
-        self.__password__ = sha256(password.encode()).hexdigest()
+        self.__password__ = password
         self.__role__ = role
-        self.__id__ = str(uuid.uuid4())
-    
+        if id:
+            self.__id__ = id
+        else:
+            self.__id__ = str(uuid.uuid4())
+            
     def getUsername(self) -> str:
         return self.__username__
 
@@ -25,4 +27,4 @@ class User:
         self.__role__ = role
     
     def setPassword(self, password:str) -> None:
-        self.__password__ = sha256(password.encode()).hexdigest()
+        self.__password__ = password
