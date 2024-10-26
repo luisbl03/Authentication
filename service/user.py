@@ -23,3 +23,6 @@ class User:
     
     def setRole(self, role:List[str]) -> None:
         self.__role__ = role
+    
+    def setPassword(self, password:str) -> None:
+        self.__password__ = sha256(password.encode()).hexdigest()
