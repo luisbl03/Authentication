@@ -19,6 +19,9 @@ class User:
     
     def getRole(self) -> List[str]:
         return self.__role__
+    
+    def getPassword(self) -> str:
+        return self.__password__
 
     def setUserName(self, username:str) -> None:
         self.__username__ = username

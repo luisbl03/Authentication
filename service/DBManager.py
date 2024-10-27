@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 class DBManager:
     def __init__(self, name:str):
@@ -17,6 +18,7 @@ class DBManager:
     
     def addUser(self,id:str, username:str, password:str, role:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
+        role = json.dumps(role)
         cursor = conn.cursor()
         try:
             cursor.execute("INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)", (id, username, password, role))
@@ -51,6 +53,7 @@ class DBManager:
     def updateRole(self,role:str, id:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
+        role = json.dumps(role)
         try:
             cursor.execute("UPDATE users SET role = ? WHERE id = ?", (role, id))
         except Exception as e:

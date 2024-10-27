@@ -2,6 +2,7 @@ from service.user import User
 from service.DBManager import DBManager
 from hashlib import sha256
 from typing import List
+import json
 
 class AuthenticationService:
     def __init__(self, dbName:str):
@@ -11,12 +12,16 @@ class AuthenticationService:
         user = self.db.getUser(id)
         if user is None:
             return None
-        return User(id=id, username=user[1], role=user[3], password=user[2])
+        roles = json.loads(user[3])
+        return User(id=id, username=user[1], role=roles, password=user[2])
     
-    def addUser(self, username:str, password:str, role:List[str]) -> bool:
+    def addUser(self, username:str, password:str, role:List[str]) -> str:
         hash = sha256(password.encode()).hexdigest()
         user = User(username, hash, role, None)
-        return self.db.addUser(user.getID(), user.getUsername(), user.getPassword(), user.getRole())
+        if self.db.addUser(user.getID(), user.getUsername(), user.getPassword(), user.getRole()):
+            return user.getID()
+        else:
+            return None
     
     def updateUsername(self, username:str, id:str) -> bool:
         return self.db.updateUsername(username, id)

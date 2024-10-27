@@ -12,11 +12,11 @@ def test_exception():
 
 def test_get():
     db = DBManager("users/users.db")
-    assert db.getUser(1) == ("1","root","root","admin")
+    assert db.getUser(1) == ("1","root","root",'"admin"')
 
 def test_updateUsername():
     db = DBManager("users/users.db")
-    assert db.updateUsername("admin",1) == True
+    assert db.updateUsername("admin","1") == True
 
 def test_updatePassword():
     db = DBManager("users/users.db")
@@ -24,7 +24,7 @@ def test_updatePassword():
 
 def test_updateRole():
     db = DBManager("users/users.db")
-    assert db.updateRole("user",1) == True
+    assert db.updateRole(["admin", "user"],1) == True
 
 def test_delete():
     db = DBManager("users/users.db")
