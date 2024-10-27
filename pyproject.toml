@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "authsrv"
+version = "0.1.0"
+authors = [
+    { name="Luis Benito Lopez", email = "Luis.Benito@alu.uclm.es"}
+]
+description = "Authentication service"
+requires-python = ">=3.10"
+dependecies = ['flask']
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent"
+]
