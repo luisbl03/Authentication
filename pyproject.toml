@@ -18,4 +18,4 @@ classifiers = [
 ]
 
 [project.scripts]
-auth_service = "service.command_handlers:run_auth"
+auth_service = "service.command_handlers:args_handler"

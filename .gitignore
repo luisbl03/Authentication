@@ -1,3 +1,5 @@
 .pytest_cache/
-/service/__pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
+*.pyd
