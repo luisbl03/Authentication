@@ -19,3 +19,6 @@ classifiers = [
 
 [project.scripts]
 auth_service = "service.command_handlers:args_handler"
+
+[tool.hatch.build.targets.wheel]
+packages = ["service"]

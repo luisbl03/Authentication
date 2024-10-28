@@ -9,7 +9,7 @@ def run_auth(host:str, port:int, db_route:str):
     app.config['service'] = AuthenticationService("users")
     app.config['db_route'] = db_route
     app.register_blueprint(auth)
-    app.run(host="0.0.0.0", port = 3000, debug=True)
+    app.run(host=host, port = port, debug=True)
 
 def args_handler():
     parser = argparse.ArgumentParser(description='Run the authentication service')
