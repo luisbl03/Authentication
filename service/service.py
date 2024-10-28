@@ -4,6 +4,21 @@ from hashlib import sha256
 from typing import List
 import json
 
+
+class UserNotFoundException(Exception):
+    def __init__(self, id:str):
+        self.id = id
+
+    def __str__(self):
+        return f"User with id {self.id} not found"
+
+class Forbiden(Exception):
+    def __init__(self, role:str):
+        self.role = role
+
+    def __str__(self):
+        return f"User with role {self.role} is forbiden to access this resource"
+
 class AuthenticationService:
     def __init__(self, dbName:str):
         self.db = DBManager(dbName)

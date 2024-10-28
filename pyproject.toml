@@ -16,3 +16,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent"
 ]
+
+[project.scripts]
+auth_service = "service.command_handlers:run_auth"
