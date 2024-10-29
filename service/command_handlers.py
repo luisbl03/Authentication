@@ -6,8 +6,7 @@ import argparse
 
 def run_auth(host:str, port:int, db_route:str):
     app = Flask(__name__, instance_relative_config=True)
-    app.config['service'] = AuthenticationService("users")
-    app.config['db_route'] = db_route
+    app.config['service'] = AuthenticationService(db_route)
     app.register_blueprint(auth)
     app.run(host=host, port = port, debug=True)
 

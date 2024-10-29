@@ -1,3 +1,4 @@
+"""modulos importados"""
 from service.user import User
 from service.DBManager import DBManager
 from hashlib import sha256
@@ -6,6 +7,7 @@ import json
 
 
 class UserNotFoundException(Exception):
+    """Excepcion que se lanza cuando no se encuentra un usuario"""
     def __init__(self, id:str):
         self.id = id
 
@@ -13,6 +15,7 @@ class UserNotFoundException(Exception):
         return f"User with id {self.id} not found"
 
 class Forbiden(Exception):
+    """Excepcion que se lanza cuando un usuario no tiene permisos para acceder a un recurso"""
     def __init__(self, role:str):
         self.role = role
 
@@ -26,11 +29,12 @@ class AuthenticationService:
     def getUser(self, id:str) -> User:
         user = self.db.getUser(id)
         if user is None:
-            return None
+            raise UserNotFoundException(id)
         roles = json.loads(user[3])
-        return User(id=id, username=user[1], role=roles, password=user[2])
+        return User(user[1], user[2], roles, user[0])
+
     
-    def addUser(self, username:str, password:str, role:List[str]) -> str:
+    def addUser(self, username:str, password:str, role:List[str] | str) -> str:
         hash = sha256(password.encode()).hexdigest()
         user = User(username, hash, role, None)
         if self.db.addUser(user.getID(), user.getUsername(), user.getPassword(), user.getRole()):
