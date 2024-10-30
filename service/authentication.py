@@ -113,34 +113,34 @@ def update_user(username:str):
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
     roles = response.json()['roles']
-    #miramos si existe el usuario
-    try:
-        user = service.getUser(id)
-    except UserNotFoundException:
-        return Response(response='{"error": "User not found"}',
-                        status=404, content_type='application/json')
-    user = service.getUser(id)
-    if 'admin' in roles:
-        #miramos si hay que actualizar el rol
-        if 'role' in request.json:
-            status = service.updateRole(id, request.json['role'])
+    userToken = response.json()['username']
+    if not 'admin' in roles:
+        try:
+            user = service.getUser(userToken)
+        except UserNotFoundException:
+            return Response(response='{"error": "User not found"}',
+                            status=404, content_type='application/json')
+        if "password" in request.json:
+            status = service.updatePassword(request.json['password'], userToken)
             if not status:
                 return Response(response='{"error": "Internal server error"}',
                                 status=500, content_type='application/json')
-    if 'username' in request.json:
-        status = service.updateUser(id, request.json['username'], user['password'])
-        if not status:
-            return Response(response='{"error": "Internal server error"}',
-                            status=500, content_type='application/json')
-    if 'password' in request.json:
-        status = service.updatePassword(id, request.json['password'], user['username'])
-        if not status:
-            return Response(response='{"error": "Internal server error"}',
-                            status=500, content_type='application/json')
-    user = service.getUser(id)
-    return Response(status=200, response=user, content_type='application/json')
+        user = service.getUser(userToken)
+        return Response(status=200, response=user, content_type='application/json')
+    else:
+        if "role" in request.json:
+            status = service.updateRole(username, request.json['role'])
+            if not status:
+                return Response(response='{"error": "Internal server error"}',
+                                status=500, content_type='application/json')
+        if "password" in request.json:
+            status = service.updatePassword(request.json['password'], username)
+            if not status:
+                return Response(response='{"error": "Internal server error"}',
+                                status=500, content_type='application/json')
+        user = service.getUser(username)
+        return Response(status=200, response=user, content_type='application/json')
             
-
 @auth.route(ROOT + "/auth/<auth_code>", methods=['GET'])
 def auth_user(auth_code:str):
     service = current_app.config['service']
