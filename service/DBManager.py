@@ -38,24 +38,35 @@ class DBManager:
         conn.close()
         return 0
     
-    def updateUser_admin(self,id:str, username:str, password:str, role:str) -> bool:
-        auth_code = sha256((username + password).encode()).hexdigest()
+    def updateUsername(self, id:str, username:str, password:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
+        auth_code = sha256((username + password).encode()).hexdigest()
         try:
-            cursor.execute("UPDATE users SET username = ?, password = ?, role = ?, authCode = ? WHERE id = ?", (username, password, role, auth_code,id))
+            cursor.execute("UPDATE users SET username = ?, authCode = ? WHERE id = ?", (username,auth_code, id))
         except Exception as e:
             return False
         conn.commit()
         conn.close()
         return True
     
-    def updateUser(self, username:str, password:str, id:str) -> bool:
+    def updatePassword(self, id:str, password:str, username:str) -> bool:
+        conn = sqlite3.connect(self.__dbName__)
+        cursor = conn.cursor()
         auth_code = sha256((username + password).encode()).hexdigest()
+        try:
+            cursor.execute("UPDATE users SET password = ?, authCode = ? WHERE id = ?", (password,auth_code, id))
+        except Exception as e:
+            return False
+        conn.commit()
+        conn.close()
+        return True
+    
+    def updateRole(self, id:str, role:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("UPDATE users SET username = ?, password = ?, authCode = ? WHERE id = ?", (username, password, auth_code,id))
+            cursor.execute("UPDATE users SET role = ? WHERE id = ?", (role, id))
         except Exception as e:
             return False
         conn.commit()

@@ -10,4 +10,9 @@ secrets para los id de usuario
 
 ## otras dudas
 - is authorized lo que hace es verificar si el token es valido, y se obtiene un hash
-- 
+- comunicacion con token es la capa de dominio
+
+
+## cosas que hacer
+- eliminar los id, son innecesarios
+- tener en cuenta que cuando hago peticion a token, este me devuelve mi usuario, lo que yo introduzco en el path no es necesariamente mi usuario

@@ -53,16 +53,27 @@ class AuthenticationService:
         else:
             return None
             
-    
-    def updateUser_admin(self, id:str, username:str, password:str, role: str) -> bool:
-        hash = sha256(password.encode()).hexdigest()
-        user = User(username, hash, role, id)
-        return self.db.updateUser_admin(user.getID(), user.getUsername(), user.getPassword(), user.getRole())
-
     def updateUser(self, id:str, username:str, password:str) -> bool:
+        status = self.db.updateUsername(id, username, hash)
+        if status == False:
+            raise UserNotFoundException(id)
+        else:
+            return status
+    
+    def updatePassword(self, id:str, password:str, username:str) -> bool:
         hash = sha256(password.encode()).hexdigest()
-        user = User(username, hash, None, id)
-        return self.db.updateUser(user.getUsername(), user.getPassword(), user.getID()) 
+        status = self.db.updatePassword(id, hash, username)
+        if status == False:
+            raise UserNotFoundException(id)
+        else:
+            return status
+    
+    def updateRole(self, id:str, role:str) -> bool:
+        status = self.db.updateRole(id, role)
+        if status == False:
+            raise UserNotFoundException(id)
+        else:
+            return status
     
     def deleteUser(self, id:str) -> bool:
         status = self.db.deleteUser(id)
