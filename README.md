@@ -16,3 +16,4 @@ secrets para los id de usuario
 ## cosas que hacer
 - eliminar los id, son innecesarios
 - tener en cuenta que cuando hago peticion a token, este me devuelve mi usuario, lo que yo introduzco en el path no es necesariamente mi usuario
+- si el usuario es user, solo puede cambiar lo relacionado con su usuario en la base de datos
