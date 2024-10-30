@@ -39,7 +39,7 @@ def add_user() -> Response:
                         status=401, content_type='application/json')
     #añadimos el usuario
     try:
-        id = service.addUser(request.json['username'], request.json['password'], request.json['role'])
+        username = service.addUser(request.json['username'], request.json['password'], request.json['role'])
     except UserAlreadyExists:
         return Response(response='{"error": "User already exists"}',
                         status=409, content_type='application/json')
@@ -49,11 +49,11 @@ def add_user() -> Response:
     if id is None:
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
-    return Response(response=f'{{"id": "{id}"}}', status=201, content_type='application/json')
+    return Response(response=f'{{"username": "{username}"}}', status=201, content_type='application/json')
 
 
-@auth.route(ROOT + '/user/<id>', methods=['GET'])
-def get_user(id:str):
+@auth.route(ROOT + '/user/<username>', methods=['GET'])
+def get_user(username:str):
     """funcion para obtener el usuario con el id dado"""
     service = current_app.config['service']
     headers = request.headers
@@ -67,14 +67,14 @@ def get_user(id:str):
                         status=401, content_type='application/json')
     #obtenemos el usuario
     try:
-        user = service.getUser(id)
+        user = service.getUser(username)
         return Response(response=user, status=200, content_type='application/json')
     except UserNotFoundException:
         return Response(response='{"error": "User not found"}',
                         status=404, content_type='application/json')
 
-@auth.route(ROOT + '/user/<id>', methods=['DELETE'])
-def delete_user(id:str):
+@auth.route(ROOT + '/user/<username>', methods=['DELETE'])
+def delete_user(username:str):
     service = current_app.config['service']
     headers = request.headers
     if 'AuthToken' not in headers:
@@ -87,7 +87,7 @@ def delete_user(id:str):
                         status=401, content_type='application/json')
     status = ''
     try:
-        status = service.deleteUser(id)
+        status = service.deleteUser(username)
     except UserNotFoundException:
         return Response(response='{"error": "User not found"}',
                         status=404, content_type='application/json')
@@ -97,8 +97,8 @@ def delete_user(id:str):
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
 
-@auth.route(ROOT + '/user/<id>', methods=['POST', 'PATCH'])
-def update_user(id:str):
+@auth.route(ROOT + '/user/<username>', methods=['POST', 'PATCH'])
+def update_user(username:str):
     service = current_app.config['service']
     headers = request.headers
     if 'AuthToken' not in headers:

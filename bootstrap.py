@@ -12,9 +12,9 @@ def create_database():
 
     conn = sqlite3.connect('users/users.db')
     cursor = conn.cursor()
-    cursor.execute("CREATE TABLE users (id TEXT NOT NULL, username TEXT PRIMARY KEY, password TEXT NOT NULL, role TEXT NOT NULL, authCode TEXT NOT NULL)")
+    cursor.execute("CREATE TABLE users (username TEXT PRIMARY KEY, password TEXT NOT NULL, role TEXT NOT NULL, authCode TEXT NOT NULL)")
     #creamos el usuario incial
-    cursor.execute("INSERT INTO users (id, username, password, role, authCode) VALUES (?, ?, ?, ?, ?)", (id, username, password, role, authCode))
+    cursor.execute("INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)", (username, password, role, authCode))
     conn.commit()
     conn.close()
 

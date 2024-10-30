@@ -7,11 +7,11 @@ from service.DBManager import DBManager
 
 class UserNotFoundException(Exception):
     """Excepcion que se lanza cuando no se encuentra un usuario"""
-    def __init__(self, id:str):
-        self.id = id
+    def __init__(self, username:str):
+        self.username = username
 
     def __str__(self):
-        return f"User with id {self.id} not found"
+        return f"User with username {self.username} not found"
 
 class Forbiden(Exception):
     """Excepcion que se lanza cuando un usuario no tiene permisos para acceder a un recurso"""
@@ -23,62 +23,55 @@ class Forbiden(Exception):
 
 class UserAlreadyExists(Exception):
     """Excepcion que se lanza cuando se intenta añadir un usuario que ya existe"""
-    def __init__(self, id:str):
-        self.id = id
+    def __init__(self, username:str):
+        self.username = username
 
     def __str__(self):
-        return f"User with id {self.id} already exists"
+        return f"User with username {self.username} already exists"
 
 class AuthenticationService:
     """Clase que gestiona la autenticacion de los usuarios"""
     def __init__(self, dbName:str):
         self.db = DBManager(dbName)
 
-    def getUser(self, id:str) -> User:
+    def getUser(self, username:str) -> User:
         """Funcion que obtiene un usuario de la base de datos"""
-        user = self.db.getUser(id)
+        user = self.db.getUser(username)
         if user is None:
-            raise UserNotFoundException(id)
-        return json.dumps({"id": user[0], "username": user[1], "role": user[3]})
+            raise UserNotFoundException(username)
+        return json.dumps({'username': user[1], 'role': user[3]})
 
     
     def addUser(self, username:str, password:str, role:str) -> str:
         hash = sha256(password.encode()).hexdigest()
-        user = User(username, hash, role, None)
-        code = self.db.addUser(user.getID(), user.getUsername(), user.getPassword(), user.getRole())
+        user = User(username, hash, role)
+        code = self.db.addUser(user.getUsername(), user.getPassword(), user.getRole())
         if code== 0:
-            return user.getID()
+            return user.getUsername()
         elif code == -1:
-            raise UserAlreadyExists(user.getID())
+            raise UserAlreadyExists(user.getUsername())
         else:
             return None
             
-    def updateUser(self, id:str, username:str, password:str) -> bool:
-        status = self.db.updateUsername(id, username, hash)
-        if status == False:
-            raise UserNotFoundException(id)
-        else:
-            return status
-    
-    def updatePassword(self, id:str, password:str, username:str) -> bool:
+    def updatePassword(self, password:str, username:str) -> bool:
         hash = sha256(password.encode()).hexdigest()
-        status = self.db.updatePassword(id, hash, username)
+        status = self.db.updatePassword(hash, username)
         if status == False:
             raise UserNotFoundException(id)
         else:
             return status
     
-    def updateRole(self, id:str, role:str) -> bool:
-        status = self.db.updateRole(id, role)
+    def updateRole(self, username:str ,role:str) -> bool:
+        status = self.db.updateRole(username, role)
         if status == False:
-            raise UserNotFoundException(id)
+            raise UserNotFoundException(username)
         else:
             return status
     
-    def deleteUser(self, id:str) -> bool:
+    def deleteUser(self, username:str) -> bool:
         status = self.db.deleteUser(id)
         if status == None:
-            raise UserNotFoundException(id)
+            raise UserNotFoundException(username)
         else:
             return status
     

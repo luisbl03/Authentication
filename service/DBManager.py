@@ -5,11 +5,11 @@ class DBManager:
     def __init__(self, name:str):
         self.__dbName__ = name
     
-    def getUser(self, id) -> tuple:
+    def getUser(self, username:str) -> tuple:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT * FROM users WHERE id = ?", (id,))
+            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
         except Exception as e:
             return None
         user = cursor.fetchone()
@@ -24,12 +24,12 @@ class DBManager:
         conn.close()
         return user 
     
-    def addUser(self,id:str, username:str, password:str, role:str) -> int:
+    def addUser(self,username:str, password:str, role:str) -> int:
         auth_code = sha256((username + password).encode()).hexdigest()
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO users (id, username, password, role, authCode) VALUES (?, ?, ?, ?, ?)", (id, username, password, role, auth_code))
+            cursor.execute("INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)", (username, password, role, auth_code))
         except sqlite3.IntegrityError:
             return -1
         except Exception:
@@ -38,46 +38,34 @@ class DBManager:
         conn.close()
         return 0
     
-    def updateUsername(self, id:str, username:str, password:str) -> bool:
+    def updatePassword(self, password:str, username:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         auth_code = sha256((username + password).encode()).hexdigest()
         try:
-            cursor.execute("UPDATE users SET username = ?, authCode = ? WHERE id = ?", (username,auth_code, id))
+            cursor.execute("UPDATE users SET password = ?, authCode = ? WHERE username= ?", (password,auth_code, username))
         except Exception as e:
             return False
         conn.commit()
         conn.close()
         return True
     
-    def updatePassword(self, id:str, password:str, username:str) -> bool:
+    def updateRole(self, username:str, role:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
-        auth_code = sha256((username + password).encode()).hexdigest()
         try:
-            cursor.execute("UPDATE users SET password = ?, authCode = ? WHERE id = ?", (password,auth_code, id))
+            cursor.execute("UPDATE users SET role = ? WHERE username = ?", (role, username))
         except Exception as e:
             return False
         conn.commit()
         conn.close()
         return True
     
-    def updateRole(self, id:str, role:str) -> bool:
+    def deleteUser(self, username:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("UPDATE users SET role = ? WHERE id = ?", (role, id))
-        except Exception as e:
-            return False
-        conn.commit()
-        conn.close()
-        return True
-    
-    def deleteUser(self, id:str) -> bool:
-        conn = sqlite3.connect(self.__dbName__)
-        cursor = conn.cursor()
-        try:
-            cursor.execute("DELETE FROM users WHERE id = ?", (id,))
+            cursor.execute("DELETE FROM users WHERE id = ?", (username,))
         except Exception as e:
             return False
         rows = cursor.rowcount
