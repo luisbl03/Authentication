@@ -39,11 +39,10 @@ class AuthenticationService:
         user = self.db.getUser(id)
         if user is None:
             raise UserNotFoundException(id)
-        roles = json.loads(user[3])
-        return json.dumps({"id": user[0], "username": user[1], "role": roles})
+        return json.dumps({"id": user[0], "username": user[1], "role": user[3]})
 
     
-    def addUser(self, username:str, password:str, role:List[str] | str) -> str:
+    def addUser(self, username:str, password:str, role:str) -> str:
         hash = sha256(password.encode()).hexdigest()
         user = User(username, hash, role, None)
         code = self.db.addUser(user.getID(), user.getUsername(), user.getPassword(), user.getRole())
@@ -55,15 +54,15 @@ class AuthenticationService:
             return None
             
     
-    def updateUsername(self, username:str, id:str) -> bool:
-        return self.db.updateUsername(username, id)
-    
-    def updatePassword(self, password:str, id:str) -> bool:
+    def updateUser_admin(self, id:str, username:str, password:str, role: str) -> bool:
         hash = sha256(password.encode()).hexdigest()
-        return self.db.updatePassword(hash, id)
-    
-    def updateRole(self, role:List[str], id:str) -> bool:
-        return self.db.updateRole(role, id)
+        user = User(username, hash, role, id)
+        return self.db.updateUser_admin(user.getID(), user.getUsername(), user.getPassword(), user.getRole())
+
+    def updateUser(self, id:str, username:str, password:str) -> bool:
+        hash = sha256(password.encode()).hexdigest()
+        user = User(username, hash, None, id)
+        return self.db.updateUser(user.getUsername(), user.getPassword(), user.getID()) 
     
     def deleteUser(self, id:str) -> bool:
         status = self.db.deleteUser(id)

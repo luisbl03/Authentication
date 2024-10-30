@@ -14,7 +14,7 @@ def get_status() -> Response:
 @auth.route(ROOT + '/user', methods=['PUT'])
 def add_user() -> Response:
     """Funcion que añade un usuario a la base de datos"""
-    service = AuthenticationService(current_app.config['service'])
+    service = current_app.config['service']
     headers = request.headers
     #miramos si esta la cabecera de autorizacion
     if 'AuthToken' not in headers:
@@ -93,7 +93,35 @@ def delete_user(id:str):
 
 @auth.route(ROOT + '/user/<id>', methods=['POST', 'PATCH'])
 def update_user(id:str):
-    pass
+    service = current_app.config['service']
+    headers = request.headers
+    if 'AuthToken' not in headers:
+        return Response(response='{"error": "No AuthToken header"}',
+                        status=400, content_type='application/json')
+    token = headers['AuthToken']
+    response = requests.get(f'http://localhost:3002/api/v1/token/{token}', timeout=20)
+    if response.status_code != 200:
+        return Response(response='{"error": "Invalid token"}',
+                        status=401, content_type='application/json')
+    roles = response.json()['roles']
+    #miramos si existe el usuario
+    try:
+        user = service.getUser(id)
+    except UserNotFoundException:
+        return Response(response='{"error": "User not found"}',
+                        status=404, content_type='application/json')
+    if 'admin' in roles:
+        status = service.updateUser_admin(id, request.json['username'], request.json['password'], request.json['role'])
+        if not status:
+            return Response(response='{"error": "Internal server error"}',
+                            status=500, content_type='application/json')
+    else:
+        status = service.updateUser(id, request.json['username'], request.json['password'])
+        if not status:
+            return Response(response='{"error": "Internal server error"}',
+                            status=500, content_type='application/json')
+    user = service.getUser(id)
+    return Response(response=user,status=200, content_type='application/json')
 
 @auth.route(ROOT + "/auth/<auth_code>", methods=['GET'])
 def auth_user(auth_code):

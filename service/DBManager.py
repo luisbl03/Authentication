@@ -1,5 +1,4 @@
 import sqlite3
-import json
 
 class DBManager:
     def __init__(self, name:str):
@@ -18,7 +17,6 @@ class DBManager:
     
     def addUser(self,id:str, username:str, password:str, role:str) -> int:
         conn = sqlite3.connect(self.__dbName__)
-        role = json.dumps(role)
         cursor = conn.cursor()
         try:
             cursor.execute("INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)", (id, username, password, role))
@@ -30,34 +28,22 @@ class DBManager:
         conn.close()
         return 0
     
-    def updateUsername(self,username:str, id:str) -> bool:
+    def updateUser_admin(self,id:str, username:str, password:str, role:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("UPDATE users SET username = ? WHERE id = ?", (username, id))
+            cursor.execute("UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?", (username, password, role, id))
         except Exception as e:
             return False
         conn.commit()
         conn.close()
         return True
     
-    def updatePassword(self,password:str, id:str) -> bool:
+    def updateUser(self, username:str, password:str, id:str) -> bool:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("UPDATE users SET password = ? WHERE id = ?", (password, id))
-        except Exception as e:
-            return False
-        conn.commit()
-        conn.close()
-        return True
-    
-    def updateRole(self,role:str, id:str) -> bool:
-        conn = sqlite3.connect(self.__dbName__)
-        cursor = conn.cursor()
-        role = json.dumps(role)
-        try:
-            cursor.execute("UPDATE users SET role = ? WHERE id = ?", (role, id))
+            cursor.execute("UPDATE users SET username = ?, password = ? WHERE id = ?", (username, password, id))
         except Exception as e:
             return False
         conn.commit()
