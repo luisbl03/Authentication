@@ -97,8 +97,8 @@ def delete_user(username:str):
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
 
-@auth.route(ROOT + '/user/<username>', methods=['POST', 'PATCH'])
-def update_user(username:str):
+@auth.route(ROOT + '/user/', methods=['POST', 'PATCH'])
+def update_user():
     service = current_app.config['service']
     headers = request.headers
     if 'AuthToken' not in headers:
@@ -116,6 +116,14 @@ def update_user(username:str):
     userToken = response.json()['username']
     if not 'admin' in roles:
         try:
+            username = request.json['username']
+        except KeyError:
+            return Response(response='{"error": "Invalid json body","expected": ["username"]}',
+                            status=400, content_type='application/json')
+        if username != userToken:
+            return Response(response='{"error": "Forbiden"}',
+                            status=401, content_type='application/json')
+        try:
             user = service.getUser(userToken)
         except UserNotFoundException:
             return Response(response='{"error": "User not found"}',
@@ -128,6 +136,7 @@ def update_user(username:str):
         user = service.getUser(userToken)
         return Response(status=200, response=user, content_type='application/json')
     else:
+        username = request.json['username']
         if "role" in request.json:
             status = service.updateRole(username, request.json['role'])
             if not status:

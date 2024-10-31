@@ -65,7 +65,7 @@ class DBManager:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
         try:
-            cursor.execute("DELETE FROM users WHERE id = ?", (username,))
+            cursor.execute("DELETE FROM users WHERE username = ?", (username,))
         except Exception as e:
             return False
         rows = cursor.rowcount

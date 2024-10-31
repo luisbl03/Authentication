@@ -39,7 +39,7 @@ class AuthenticationService:
         user = self.db.getUser(username)
         if user is None:
             raise UserNotFoundException(username)
-        return json.dumps({'username': user[1], 'role': user[3]})
+        return json.dumps({'username': user[0], 'role': user[2]})
 
     
     def addUser(self, username:str, password:str, role:str) -> str:
@@ -69,7 +69,7 @@ class AuthenticationService:
             return status
     
     def deleteUser(self, username:str) -> bool:
-        status = self.db.deleteUser(id)
+        status = self.db.deleteUser(username)
         if status == None:
             raise UserNotFoundException(username)
         else:
