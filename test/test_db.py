@@ -1,32 +1,38 @@
 import pytest_cov
 import pytest
+from hashlib import sha256
 from service.DBManager import DBManager 
 
 def test_insert():
     db = DBManager("users/users.db")
-    assert db.addUser(1,"root","root","admin") == True
+    assert db.addUser("luis","patata","admin") == 0
 
 def test_exception():
     db = DBManager("users/users.db")
-    assert db.addUser(1,"root","root","admin") == False
+    assert db.addUser("luis","patata","admin") == -1
 
 def test_get():
     db = DBManager("users/users.db")
-    assert db.getUser(1) == ("1","root","root",'"admin"')
+    auth_code = sha256(("luis" + "patata").encode()).hexdigest()
+    assert db.getUser("luis") == ("luis", "patata", "admin", auth_code)
 
-def test_updateUsername():
+def test_authCode():
     db = DBManager("users/users.db")
-    assert db.updateUsername("admin","1") == True
+    auth_code = sha256(("luis" + "patata").encode()).hexdigest()
+    user = db.existsAuthCode(auth_code)
+    assert user == ("luis", "patata", "admin", auth_code)
 
 def test_updatePassword():
     db = DBManager("users/users.db")
-    assert db.updatePassword("admin2",1) == True
+    assert db.updatePassword("admin2","luis") == True
 
 def test_updateRole():
     db = DBManager("users/users.db")
-    assert db.updateRole(["admin", "user"],1) == True
+    assert db.updateRole(username="luis",role="user") == True
 
 def test_delete():
     db = DBManager("users/users.db")
-    assert db.deleteUser(1) == True
+    assert db.deleteUser("luis") == True
+
+
 

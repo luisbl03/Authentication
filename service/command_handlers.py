@@ -18,3 +18,10 @@ def args_handler():
     args = parser.parse_args()
     run_auth(args.listening, args.port, args.db)
 
+def mock_app():
+    app = Flask(__name__, instance_relative_config=True)
+    app.config['service'] = AuthenticationService('users/users.db')
+    app.config['TESTING'] = True
+    app.register_blueprint(auth)
+    return app
+

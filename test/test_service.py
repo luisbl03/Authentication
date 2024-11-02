@@ -1,35 +1,41 @@
 import pytest
 from service.service import AuthenticationService
 from service.user import User
+from hashlib import sha256
 
 
 def test_addUser():
     service = AuthenticationService("users/users.db")
-    id = service.addUser("root", "root", ["admin", "user"])
-    assert id is not None
+    username = service.addUser("luis", "luis", "admin")
+    assert username == "luis"
 
 def test_getUser():
     service = AuthenticationService("users/users.db")
-    id = service.addUser("root", "root", ["admin", "user"])
-    user = service.getUser(id)
-    assert user is not None
-    assert user.getUsername() == "root"
-    assert user.getRole() == ["admin", "user"]
+    username = service.addUser("root", "root", "user")
+    user = service.getUser(username)
+    assert user == '{"username": "root", "role": "user"}'
 
-def test_updateUsername():
+def test_existsAuthCode():
     service = AuthenticationService("users/users.db")
-    id = service.addUser("luis","luis",["admin"])
-    service.updateUsername("luisito", id)
-    user = service.getUser(id)
-    assert user.getUsername() == "luisito"
+    auth_code = sha256(("luis"+"luis").encode()).hexdigest()
+    assert service.existsAuthCode(auth_code) == True
+
+def test_checkAdmin():
+    service = AuthenticationService("users/users.db")
+    status = service.check_admin("admin")
+    assert status == True
 
 def test_updateRole():
     service = AuthenticationService("users/users.db")
-    id = service.addUser("prueba", "prueba", ["user"])
-    service.updateRole(["admin", "user"], id)
-    user = service.getUser(id)
-    assert user.getRole() == ["admin", "user"]
+    status = service.updateRole("root", "admin")
+    assert status == True
+
+def test_updatePassword():
+    service = AuthenticationService("users/users.db")
+    status = service.updatePassword("root", "root")
+    assert status == True
+
 def test_deleteUser():
     service = AuthenticationService("users/users.db")
-    id = service.addUser("Alejandro", "Alejandro", ["user"])
-    assert service.deleteUser(id) == True
+    status = service.deleteUser("root")
+    assert status == True
