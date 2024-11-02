@@ -97,7 +97,7 @@ def delete_user(username:str):
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
 
-@auth.route(ROOT + '/user/', methods=['POST', 'PATCH'])
+@auth.route(ROOT + '/user', methods=['POST', 'PATCH'])
 def update_user():
     service = current_app.config['service']
     headers = request.headers
@@ -133,6 +133,9 @@ def update_user():
             if not status:
                 return Response(response='{"error": "Internal server error"}',
                                 status=500, content_type='application/json')
+        if 'role' in request.json:
+            return Response(response='{"error": "Forbiden"}',
+                            status=401, content_type='application/json')
         user = service.getUser(userToken)
         return Response(status=200, response=user, content_type='application/json')
     else:
