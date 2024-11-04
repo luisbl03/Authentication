@@ -15,12 +15,3 @@ class User:
     
     def getPassword(self) -> str:
         return self.__password__
-
-    def setUserName(self, username:str) -> None:
-        self.__username__ = username
-    
-    def setRole(self, role:List[str]) -> None:
-        self.__role__ = role
-    
-    def setPassword(self, password:str) -> None:
-        self.__password__ = password

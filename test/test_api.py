@@ -88,7 +88,7 @@ def test_delete_user(get_api):
     response = get_api.delete('/auth/v1/user/user', headers=headers)
     assert response.status_code == 404
     headers = {"Content-Type": "application/json","AuthToken":"token_for_admin"}
-    get_api.put('/auth/v1/user', json={'username':'user2', 'password':'test', 'role':'admin'}, headers=headers)
+    response = get_api.put('/auth/v1/user', json={'username':'user2', 'password':'test', 'role':'admin'}, headers=headers)
     headers = {"Content-Type": "application/json","AuthToken":"token_for_user"}
     response = get_api.delete('/auth/v1/user/user2', headers=headers)
     assert response.status_code == 401
