@@ -39,17 +39,17 @@ def add_user() -> Response:
                         status=401, content_type='application/json')
     #añadimos el usuario
     try:
-        username = service.addUser(request.json['username'], request.json['password'], request.json['role'])
+        username, role = service.addUser(request.json['username'], request.json['password'], request.json['role'])
     except UserAlreadyExists:
         return Response(response='{"error": "User already exists"}',
                         status=409, content_type='application/json')
     except KeyError:
         return Response(response='{"error": "Invalid json body","expected": ["username", "password", "role"]}',
                         status=400, content_type='application/json')
-    if id is None:
+    if username is None:
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
-    return Response(response=f'{{"username": "{username}"}}', status=201, content_type='application/json')
+    return Response(response=f'{{"username": "{username}", "roles": "{role}"}}', status=201, content_type='application/json')
 
 
 @auth.route(ROOT + '/user/<username>', methods=['GET'])
@@ -85,6 +85,12 @@ def delete_user(username:str):
     if response.status_code != 200:
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
+    userToken = response.json()['username']
+    roles = response.json()['roles']
+    if not 'admin' in roles:
+        if username != userToken:
+            return Response(response='{"error": "Forbiden"}',
+                            status=401, content_type='application/json')
     status = ''
     try:
         status = service.deleteUser(username)

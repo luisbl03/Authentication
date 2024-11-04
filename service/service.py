@@ -47,7 +47,7 @@ class AuthenticationService:
         user = User(username, hash, role)
         code = self.db.addUser(user.getUsername(), user.getPassword(), user.getRole())
         if code== 0:
-            return user.getUsername()
+            return user.getUsername(), user.getRole()
         elif code == -1:
             raise UserAlreadyExists(user.getUsername())
         else:
