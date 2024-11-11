@@ -11,17 +11,19 @@ python bootstrap.py
 Este archivo creara la base de datos y añadira el usuario administrador para empezar a trabajar con el servicio.
 
 ## Instalación
-Para instalar la aplicacion de servicio, es necesario disponer de un entorno virtual de python. Una vez se tenga se ejecuta el siguiente comando:
+Para instalar la aplicacion de servicio, es necesario disponer de un entorno virtual de python.
+Una vez se tenga se ejecuta el siguiente comando:
 
 ```bash
 pip install .
 ```
+Se instalaran todas las dependencias necesarias para el servicio y testing
 
 ## Ejecución
 Para ejecutar el servicio, se debe ejecutar el siguiente comando:
 
 ```bash
-authService
+auth_service
 ```
 
 ## Testing

@@ -3,7 +3,7 @@
 *.pyc
 *.pyo
 *.pyd
-.venv/
+.venv/*
 .vscode/
 .coverage
 htmlcov/

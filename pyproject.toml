@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Authentication service"
 requires-python = ">=3.10"
-dependencies = ['flask']
+dependencies = ['flask', 'requests', 'pytest', 'pytest-cov']
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
