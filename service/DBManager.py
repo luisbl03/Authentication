@@ -19,10 +19,10 @@ class DBManager:
     def existsAuthCode(self, authCode:str) -> str:
         conn = sqlite3.connect(self.__dbName__)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE authCode = ?", (authCode,))
-        user = cursor.fetchone()
+        cursor.execute("SELECT role FROM users WHERE authCode = ?", (authCode,))
+        roles= cursor.fetchone()
         conn.close()
-        return user 
+        return roles
     
     def addUser(self,username:str, password:str, role:str) -> int:
         auth_code = sha256((username + password).encode()).hexdigest()

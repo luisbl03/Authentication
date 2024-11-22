@@ -162,8 +162,8 @@ def update_user():
 @auth.route(ROOT + "/auth/<auth_code>", methods=['GET'])
 def auth_user(auth_code:str):
     service = current_app.config['service']
-    if service.existsAuthCode(auth_code):
-        return Response(status=204)
-    else:
+    roles = service.existsAuthCode(auth_code)
+    if roles is None:
         return Response(response='{"error": "User not found"}',
                         status=404, content_type='application/json')
+    return Response(response=roles, status=200, content_type='application/json')

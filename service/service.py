@@ -80,8 +80,8 @@ class AuthenticationService:
             raise Forbiden(role)
         return True
     
-    def existsAuthCode(self, authCode:str) -> bool:
-        user = self.db.existsAuthCode(authCode)
-        if user is None:
+    def existsAuthCode(self, authCode:str) -> str:
+        roles = self.db.existsAuthCode(authCode)
+        if roles is None:
             return False
-        return True
+        return roles

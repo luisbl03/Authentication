@@ -70,7 +70,7 @@ def test_authcode(get_api):
     headers = {"Content-Type": "application/json", 'AuthToken':'token_for_admin'}
     password_sha = sha256('patata'.encode()).hexdigest()
     authCode = sha256(('user'+password_sha).encode()).hexdigest()
-    response = get_api.get('/auth/v1/auth/'+authCode, headers=headers)
+    response = get_api.get('/auth/v1/auth/d6c2b61070c8cb1c60cbb7a8a026074d0a5d56a6fc5c40b2c37b26fbb3a39914', headers=headers)
     assert response.status_code == 204
     response = get_api.get('/auth/v1/auth/usr', headers=headers)
     assert response.status_code == 404
