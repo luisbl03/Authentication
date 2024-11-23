@@ -84,4 +84,4 @@ class AuthenticationService:
         roles = self.db.existsAuthCode(authCode)
         if roles is None:
             return False
-        return roles
+        return json.dumps({'roles': roles[0]})
