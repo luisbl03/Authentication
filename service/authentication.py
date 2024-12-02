@@ -1,6 +1,6 @@
 """Importaciones"""
 from flask import Blueprint, request, current_app, Response
-from service.service import UserNotFoundException, Forbiden, UserAlreadyExists, AuthenticationService
+from service import UserNotFoundException, Forbiden, UserAlreadyExists, AuthenticationService
 import requests
 
 auth = Blueprint('auth', __name__)
