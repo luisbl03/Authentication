@@ -2,8 +2,8 @@
 from hashlib import sha256
 from typing import List
 import json
-from .user import User
-from .DBManager import DBManager
+from user import User
+from DBManager import DBManager
 
 class UserNotFoundException(Exception):
     """Excepcion que se lanza cuando no se encuentra un usuario"""

@@ -1,14 +1,15 @@
 FROM ubuntu:latest
 
-
 RUN groupadd -r user && useradd -r -g user user
-
+ENV token_endpoint="http://172.19.128.76:3002/api/v1/token"
+ENV STORAGE_FOLDER="storage"
 
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
-    curl
+    curl \
+    sqlite3 
 
 WORKDIR /app
 
@@ -31,7 +32,7 @@ RUN python3 bootstrap.py
 RUN chown -R user:user /app
 
 USER user
-ENV token_endpoint="http://192.168.0.5:3002/api/v1/token"
+
 
 CMD ["venv/bin/python", "service/command_handlers.py"]
 

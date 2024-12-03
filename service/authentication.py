@@ -2,9 +2,11 @@
 from flask import Blueprint, request, current_app, Response
 from service import UserNotFoundException, Forbiden, UserAlreadyExists, AuthenticationService
 import requests
+import os
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
+token_endpoint = os.getenv('token_endpoint')
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -25,7 +27,7 @@ def add_user() -> Response:
     
     #miramos si el token es valido, para ello debemos consultar al servicio de token
     token = headers['AuthToken']
-    response = requests.get(f'http://localhost:3002/api/v1/token/{token}', timeout=20)
+    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
     if response.status_code != 200:
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
@@ -61,7 +63,7 @@ def get_user(username:str):
         return Response(response='{"error": "No AuthToken header"}',
                         status=400, content_type='application/json')
     token = headers['AuthToken']
-    response = requests.get(f'http://localhost:3002/api/v1/token/{token}', timeout=20)
+    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
     if response.status_code != 200:
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
@@ -81,7 +83,7 @@ def delete_user(username:str):
         return Response(response='{"error": "No AuthToken header"}',
                         status=400, content_type='application/json')
     token = headers['AuthToken']
-    response = requests.get(f'http://localhost:3002/api/v1/token/{token}', timeout=20)
+    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
     if response.status_code != 200:
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
@@ -114,7 +116,7 @@ def update_user():
     if not request.json:
         return Response(response='{"error": "No json body"}',status=400, content_type='application/json')
     token = headers['AuthToken']
-    response = requests.get(f'http://localhost:3002/api/v1/token/{token}', timeout=20)
+    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
     if response.status_code != 200:
         return Response(response='{"error": "Invalid token"}',
                         status=401, content_type='application/json')
