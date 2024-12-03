@@ -12,7 +12,6 @@ def check_container(name:str):
         else:
             print(f'El contenedor {name} no esta en ejecucion')
             #borramos el contenedor
-            container.remove()
             return False
     except docker.errors.NotFound:
         print(f'El contenedor {name} no existe')
@@ -21,7 +20,7 @@ def check_container(name:str):
 def run_container(name_image:str, name_container:str) -> int:
     if not check_container(name_container):
         print(f'Iniciando contenedor {name_container}')
-        client.containers.run(name_image, name=name_container, detach=True)
+        client.containers.run(name_image, name=name_container, detach=True, auto_remove=True, mem_limit='2g', cpu_quota=100000, cpu_period=100000)
         print(f'Contenedor {name_container} iniciado')
         return 0
     else:
