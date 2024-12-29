@@ -1,9 +1,8 @@
 """modulos importados"""
 from hashlib import sha256
-from typing import List
 import json
-from user import User
-from DBManager import DBManager
+from service.user import User
+from service.DBManager import DBManager
 
 class UserNotFoundException(Exception):
     """Excepcion que se lanza cuando no se encuentra un usuario"""
@@ -31,57 +30,62 @@ class UserAlreadyExists(Exception):
 
 class AuthenticationService:
     """Clase que gestiona la autenticacion de los usuarios"""
-    def __init__(self, dbName:str):
-        self.db = DBManager(dbName)
+    def __init__(self, db_name:str):
+        self.db = DBManager(db_name)
 
-    def getUser(self, username:str) -> User:
+    def get_user(self, username:str) -> User:
         """Funcion que obtiene un usuario de la base de datos"""
         user = self.db.getUser(username)
         if user is None:
             raise UserNotFoundException(username)
         return json.dumps({'username': user[0], 'role': user[2]})
 
-    
-    def addUser(self, username:str, password:str, role:str) -> str:
-        hash = sha256(password.encode()).hexdigest()
-        user = User(username, hash, role)
-        code = self.db.addUser(user.getUsername(), user.getPassword(), user.getRole())
+    def add_user(self, username:str, password:str, role:str) -> str:
+        """Funcion que añade un usuario a la base de datos"""
+        password_hash = sha256(password.encode()).hexdigest()
+        user = User(username, password_hash, role)
+        code = self.db.addUser(user.getusername(), user.getpassword(), user.getrole())
         if code== 0:
-            return user.getUsername(), user.getRole()
-        elif code == -1:
-            raise UserAlreadyExists(user.getUsername())
-        else:
-            return None
-            
-    def updatePassword(self, password:str, username:str) -> bool:
-        hash = sha256(password.encode()).hexdigest()
-        status = self.db.updatePassword(hash, username)
-        if status == False:
+            return user.getusername(), user.getrole()
+        if code == -1:
+            raise UserAlreadyExists(user.getusername())
+
+        return None
+
+    def update_password(self, password:str, username:str) -> bool:
+        """Funcion que actualiza la contraseña de un usuario"""
+        password_hash = sha256(password.encode()).hexdigest()
+        status = self.db.updatePassword(password_hash, username)
+        if status is False:
             raise UserNotFoundException(id)
-        else:
-            return status
-    
-    def updateRole(self, username:str ,role:str) -> bool:
+
+        return status
+
+    def update_role(self, username:str ,role:str) -> bool:
+        """Funcion que actualiza el rol de un usuario"""
         status = self.db.updateRole(username, role)
-        if status == False:
+        if status is False:
             raise UserNotFoundException(username)
-        else:
-            return status
-    
-    def deleteUser(self, username:str) -> bool:
+
+        return status
+
+    def delete_user(self, username:str) -> bool:
+        """Funcion que elimina un usuario de la base de datos"""
         status = self.db.deleteUser(username)
-        if status == None:
+        if status is None:
             raise UserNotFoundException(username)
-        else:
-            return status
-    
+
+        return status
+
     def check_admin(self,role) -> bool:
+        """Funcion que comprueba si un usuario tiene permisos de administrador"""
         if 'admin' not in role:
             raise Forbiden(role)
         return True
-    
-    def existsAuthCode(self, authCode:str) -> str:
-        roles = self.db.existsAuthCode(authCode)
+
+    def exists_authcode(self, authcode:str) -> str:
+        """Funcion que comprueba si un codigo de autenticacion existe en la base de datos"""
+        roles = self.db.existsAuthCode(authcode)
         if roles is None:
             return False
         return json.dumps({'roles': roles[0]})
