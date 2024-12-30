@@ -8,9 +8,8 @@ def create_database(db_path:str):
     funcion para crear la base de datos
     """
     username = 'administrator'
-    #pedimos la contraseña por consola
-    password = input('Introduce la contraseña para el usuario administrador: ')
-
+    #sacamos la variable de entorno para la contraseña
+    password = os.getenv('ADMINPASS')
     password = sha256(password.encode()).hexdigest()
     role = 'admin'
     authcode = sha256((username + password).encode()).hexdigest()

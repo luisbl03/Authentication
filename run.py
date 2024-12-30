@@ -31,4 +31,3 @@ def run_container(name_image:str, name_container:str) -> int:
 
 if __name__ == '__main__':
     run_container('authsrv', 'authsrv')
-    
