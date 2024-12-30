@@ -11,9 +11,8 @@ def stop_container(name: str) -> bool:
             container.stop()
             print(f'El contenedor {name} ha sido detenido.')
             return True
-        else:
-            print(f'El contenedor {name} no está en ejecución.')
-            return False
+        print(f'El contenedor {name} no está en ejecución.')
+        return False
     except docker.errors.NotFound:
         print(f'El contenedor {name} no existe.')
         return False
