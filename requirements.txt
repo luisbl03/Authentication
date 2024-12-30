@@ -2,3 +2,4 @@ flask
 requests
 pytest
 pytest-cov
+pylint
