@@ -36,7 +36,9 @@ class DBManager:
         conn = sqlite3.connect(self.__dbname__)
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)", (username, password, role, auth_code))
+            cursor.execute(
+                "INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)",
+            (username, password, role, auth_code))
         except sqlite3.IntegrityError:
             return -1
         except (sqlite3.OperationalError, sqlite3.ProgrammingError, sqlite3.DatabaseError):
@@ -44,36 +46,46 @@ class DBManager:
         conn.commit()
         conn.close()
         return 0
-    
-    def updatePassword(self, password:str, username:str) -> bool:
+
+    def update_password(self, password:str, username:str) -> bool:
+        """Actualiza la contraseña de un usuario"""
         conn = sqlite3.connect(self.__dbname__)
         cursor = conn.cursor()
         auth_code = sha256((username + password).encode()).hexdigest()
         try:
-            cursor.execute("UPDATE users SET password = ?, authCode = ? WHERE username= ?", (password,auth_code, username))
-        except Exception as e:
+            cursor.execute("UPDATE users SET password = ?, authCode = ? WHERE username= ?",
+            (password,auth_code, username))
+        except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
+        sqlite3.DatabaseError,
+        sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
             return False
         conn.commit()
         conn.close()
         return True
-    
-    def updateRole(self, username:str, role:str) -> bool:
+
+    def update_role(self, username:str, role:str) -> bool:
+        """Actualiza el rol de un usuario"""
         conn = sqlite3.connect(self.__dbname__)
         cursor = conn.cursor()
         try:
             cursor.execute("UPDATE users SET role = ? WHERE username = ?", (role, username))
-        except Exception as e:
+        except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
+        sqlite3.DatabaseError,
+        sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
             return False
         conn.commit()
         conn.close()
         return True
-    
-    def deleteUser(self, username:str) -> bool:
+
+    def delete_user(self, username:str) -> bool:
+        """Elimina un usuario de la base de datos"""
         conn = sqlite3.connect(self.__dbname__)
         cursor = conn.cursor()
         try:
             cursor.execute("DELETE FROM users WHERE username = ?", (username,))
-        except Exception as e:
+        except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
+        sqlite3.DatabaseError,
+        sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
             return False
         rows = cursor.rowcount
         if rows == 0:
