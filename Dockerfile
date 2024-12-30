@@ -41,5 +41,5 @@ RUN venv/bin/pip install -e .
 USER user
 
 
-CMD ["venv/bin/python", "service/command_handlers.py"]
+CMD ["venv/bin/auth_service"]
 
