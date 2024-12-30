@@ -1,41 +1,26 @@
 # SERVICIO DE AUTENTICACION
 
+## Descripción
+Este servicio se encarga de la autenticacion y gestion de los usuarios del sistema. Se comunica con un servicio de tokens de usuario para dar el acceso a los usuarios.
 
-## Preparacion
-Para el primer lanzamiento del servicio, es necesario tener la base de datos creada, para ello, se ha creado un archivo python llamado bootstrap.py, el cual se ejecuta con el siguiente comando:
-
+## Instalacion
+Este servicio se encuentra dentro de un contenedor docker, para ejecutarlo, se ha creado un script que automatiza esto. Para ejecutarlo, se debe ejecutar el siguiente comando:
 ```bash
-python bootstrap.py
+./build.sh
 ```
 
-Este archivo creara la base de datos y añadira el usuario administrador para empezar a trabajar con el servicio.
+La persistencia se encuentra dentro del contenedor.
 
-## Instalación
-Para instalar la aplicacion de servicio, es necesario disponer de un entorno virtual de python.
-Una vez se tenga se ejecuta el siguiente comando:
-
-```bash
-pip install .
-```
-Se instalaran todas las dependencias necesarias para el servicio y testing
-
-## Ejecución
+## Ejecucion
 Para ejecutar el servicio, se debe ejecutar el siguiente comando:
-
 ```bash
-auth_service
+python3 run.py
 ```
 
-## Testing
-Los test se ejcutan desde un script llamado starts_test.sh, el cual se ejecuta con el siguiente comando:
+El contenedor se arranca en segundo plano, por lo que se puede seguir utilizando la terminal.
 
+## Detener
+Para detener el servicio, se debe ejecutar el siguiente comando:
 ```bash
-./start_tests.sh
-```
-Acto seguido cuando se ejecuten se abrira automaticamente el navegador con la cobertura de los test realizados.
-
-Para borrar los tests se ejecuta el siguiente comando:
-
-```bash
-./delete_test.sh
+python3 stop.py
 ```

@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN groupadd -r user && useradd -r -g user user
-ENV token_endpoint="http://172.19.128.76:3002/api/v1/token"
+ENV token_endpoint="http://172.24.180.144:3002/api/v1/token"
 ENV STORAGE_FOLDER="storage"
 ENV ADMINPASS="admin"
 ENV PYTHONPATH="/app"
@@ -23,10 +23,6 @@ COPY service/service.py /app/service/service.py
 COPY service/user.py /app/service/user.py
 COPY bootstrap.py /app/bootstrap.py
 COPY requirements.txt /app/requirements.txt
-COPY start_tests.sh /app/start_tests.sh
-COPY delete_tests.sh /app/delete_tests.sh
-COPY test/__init__.py /app/test/__init__.py
-COPY test/test_api.py /app/test/test_api.py
 COPY pyproject.toml /app/pyproject.toml
 
 RUN python3 -m venv venv
