@@ -17,8 +17,10 @@ def create_database(db_path:str):
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute(
-        "CREATE TABLE users (username TEXT PRIMARY KEY, password TEXT NOT NULL, role TEXT NOT NULL, authCode TEXT NOT NULL)")
+    request = "CREATE TABLE users"
+    request += "(username TEXT PRIMARY KEY, password TEXT NOT NULL"
+    request += ", role TEXT NOT NULL, authCode TEXT NOT NULL)"
+    cursor.execute(request)
     #creamos el usuario incial
     cursor.execute("INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)"
                    ,(username, password, role, authcode))
