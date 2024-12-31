@@ -14,13 +14,11 @@ La persistencia se encuentra dentro del contenedor.
 ## Ejecucion
 Para ejecutar el servicio, se debe ejecutar el siguiente comando:
 ```bash
-python3 docker_manager.py
+python3 start.py
 ```
-Y debe escribir la opcion iniciar.
 
 ## Detener
 Para detener el servicio, se debe ejecutar el siguiente comando:
 ```bash
-python3 docker_manager.py
+python3 stop.py
 ```
-Y debe escribir la opcion detener.
