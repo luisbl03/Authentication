@@ -8,7 +8,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-token_endpoint = os.getenv('token_endpoint')
+token_endpoint = "http://172.2.0.3:3002"
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -124,7 +124,7 @@ def check_auth_header(headers) -> List[str]:
     if not "AuthToken" in headers:
         return None
     token = headers['AuthToken']
-    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
+    response = requests.get(f'{token_endpoint}:3002/{token}', timeout=20)
     if response.status_code == 200:
         return response.json()['roles']
     return None
