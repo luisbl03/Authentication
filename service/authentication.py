@@ -1,4 +1,5 @@
 """Importaciones"""
+import os
 from typing import List
 import requests
 from flask import Blueprint, request, current_app, Response
@@ -7,7 +8,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-TOKEN_ENDPOINT = "http://172.2.0.3:3002"
+TOKEN_ENDPOINT = os.getenv("token_endpoint")
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -33,7 +34,7 @@ def add_user() -> Response:
     #agregar usuario
     service = current_app.config['service']
     try:
-        username, role = service.addUser(request.json['username'],
+        username, role = service.add_user(request.json['username'],
         request.json['password'], request.json['role'])
     except (UserAlreadyExists,KeyError, Forbiden)as e:
         return Response(status=409, response=str(e))
@@ -53,7 +54,7 @@ def get_user(username:str) -> Response:
     #obtener usuario
     service = current_app.config['service']
     try:
-        user = service.getUser(username)
+        user = service.get_user(username)
     except UserNotFoundException as e:
         return Response(status=404, response=str(e))
     return Response(response=user, status=200, content_type='application/json')
@@ -72,7 +73,7 @@ def delete_user(username:str) -> Response:
     #eliminar usuario
     service = current_app.config['service']
     try:
-        status = service.deleteUser(username)
+        status = service.delete_user(username)
     except UserNotFoundException as e:
         return Response(status=404, response=str(e))
 
@@ -103,7 +104,11 @@ def update_user(username:str) -> Response:
     #actualizar usuario
     service = current_app.config['service']
     try:
-        status = service.updatePassword(request.json['password'], username)
+        status = service.update_password(request.json['password'], username)
+    except UserNotFoundException as e:
+        return Response(status=404, response=str(e))
+    try:
+        status = service.update_role(username, request.json['role'])
     except UserNotFoundException as e:
         return Response(status=404, response=str(e))
     if status:
