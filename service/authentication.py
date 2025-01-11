@@ -131,7 +131,7 @@ def check_auth_header(headers) -> List[str]:
     if not "AuthToken" in headers:
         return None
     token = headers['AuthToken']
-    response = requests.get(f'{TOKEN_ENDPOINT}:3002/{token}', timeout=20)
+    response = requests.get(f'{TOKEN_ENDPOINT}/{token}', timeout=20)
     if response.status_code == 200:
         return response.json()['roles']
     return None
