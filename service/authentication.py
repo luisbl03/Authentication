@@ -1,5 +1,4 @@
 """Importaciones"""
-import os
 from typing import List
 import requests
 from flask import Blueprint, request, current_app, Response
@@ -8,7 +7,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-token_endpoint = "http://172.2.0.3:3002"
+TOKEN_ENDPOINT = "http://172.2.0.3:3002"
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -112,6 +111,14 @@ def update_user(username:str) -> Response:
     return Response(response='{"error": "Internal server error"}',
                     status=500, content_type='application/json')
 
+@auth.route(ROOT + '/is_authorized/<auth_code>', methods=['GET'])
+def is_authorized(auth_code:str) -> Response:
+    """entrypoint que comprueba si un codigo de autenticacion existe en la base de datos"""
+    service = current_app.config['service']
+    if not service.existsAuthcode(auth_code):
+        return Response(status=404)
+    return Response(status=200)
+
 
 def check_body(body: dict) -> bool:
     """Función que valida el cuerpo de la petición"""
@@ -124,7 +131,7 @@ def check_auth_header(headers) -> List[str]:
     if not "AuthToken" in headers:
         return None
     token = headers['AuthToken']
-    response = requests.get(f'{token_endpoint}:3002/{token}', timeout=20)
+    response = requests.get(f'{TOKEN_ENDPOINT}:3002/{token}', timeout=20)
     if response.status_code == 200:
         return response.json()['roles']
     return None
@@ -138,7 +145,7 @@ def check_roles(roles: List[str]) -> bool:
 def get_usertoken(headers) -> str:
     """Funcion que obtiene el usuario del token de autenticacion"""
     token = headers['AuthToken']
-    response = requests.get(f'{token_endpoint}/{token}', timeout=20)
+    response = requests.get(f'{TOKEN_ENDPOINT}/{token}', timeout=20)
     if response.status_code == 200:
         return response.json()['username']
     return None
