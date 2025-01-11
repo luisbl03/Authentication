@@ -120,7 +120,7 @@ def update_user(username:str) -> Response:
 def is_authorized(auth_code:str) -> Response:
     """entrypoint que comprueba si un codigo de autenticacion existe en la base de datos"""
     service = current_app.config['service']
-    if not service.existsAuthcode(auth_code):
+    if not service.exists_authcode(auth_code):
         return Response(status=404)
     return Response(status=200)
 
