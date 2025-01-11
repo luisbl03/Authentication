@@ -122,7 +122,7 @@ def is_authorized(auth_code:str) -> Response:
     service = current_app.config['service']
     if not service.exists_authcode(auth_code):
         return Response(status=404)
-    return Response(status=200)
+    return Response(status=204)
 
 
 def check_body(body: dict) -> bool:
