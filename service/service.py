@@ -83,9 +83,9 @@ class AuthenticationService:
             raise Forbiden(role)
         return True
 
-    def exists_authcode(self, authcode:str) -> bool:
+    def exists_authcode(self, authcode:str) -> str:
         """Funcion que comprueba si un codigo de autenticacion existe en la base de datos"""
         roles = self.db.exists_authcode(authcode)
         if roles is None:
             return False
-        return True
+        return roles
