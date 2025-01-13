@@ -25,7 +25,12 @@ class DBManager:
         """Verifica si un authCode existe en la base de datos"""
         conn = sqlite3.connect(self.__dbname__)
         cursor = conn.cursor()
-        cursor.execute("SELECT role FROM users WHERE authCode = ?", (authcode,))
+        try:
+            cursor.execute("SELECT role FROM users WHERE authCode = ?", (authcode,))
+        except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
+        sqlite3.DatabaseError,
+        sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            return None
         roles= cursor.fetchone()
         conn.close()
         return roles

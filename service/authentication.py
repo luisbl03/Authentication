@@ -8,7 +8,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-TOKEN_ENDPOINT = "http://192.168.18.11:3002/api/v1/token"
+TOKEN_ENDPOINT = "http://192.168.0.7:3002/api/v1/token"
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -69,14 +69,15 @@ def delete_user(username:str) -> Response:
     #validacion de los roles
     valid = check_roles(roles)
     if not valid:
-        return Response(status=403, response="Forbidden")
+        #miramos si el usuario que esta borrando es el suyo
+        if username != get_usertoken(request.headers):
+            return Response(status=401, response="Unauthorized")
     #eliminar usuario
     service = current_app.config['service']
     try:
         status = service.delete_user(username)
     except UserNotFoundException as e:
         return Response(status=404, response=str(e))
-
     if status:
         return Response(status=204)
     return Response(response='{"error": "Internal server error"}',
@@ -100,7 +101,7 @@ def update_user(username:str) -> Response:
     if not valid:
         #solo tiene permiso para tocar su usuario
         if username != get_usertoken(request.headers):
-            return Response(status=403, response="Forbidden")
+            return Response(status=401, response="Unauthorized")
     #actualizar usuario
     service = current_app.config['service']
     try:
