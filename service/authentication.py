@@ -30,7 +30,7 @@ def add_user() -> Response:
     #validacion de los roles
     valid = check_roles(roles)
     if not valid:
-        return Response(status=403, response="Forbidden")
+        return Response(status=401, response="Forbidden")
     #agregar usuario
     service = current_app.config['service']
     try:
@@ -133,7 +133,7 @@ def is_authorized(auth_code:str) -> Response:
 
 def check_body(body: dict) -> bool:
     """Función que valida el cuerpo de la petición"""
-    if 'username' in body and 'password' in body:
+    if 'username' in body and 'password' in body and 'role' in body:
         return True
     return False
 
