@@ -133,4 +133,3 @@ def test_delete_user(api_client):
 
     response = api_client.delete('/auth/v1/user/user', headers=headers)
     assert response.status_code == 404
-
