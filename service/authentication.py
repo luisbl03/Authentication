@@ -1,5 +1,5 @@
 """Importaciones"""
-import os
+#import os
 from typing import List
 import requests
 from flask import Blueprint, request, current_app, Response
@@ -8,7 +8,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-TOKEN_ENDPOINT = os.getenv("token_endpoint")
+TOKEN_ENDPOINT = "http://192.168.18.11:3002/api/v1/token"
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:
@@ -85,15 +85,15 @@ def delete_user(username:str) -> Response:
 @auth.route(ROOT + '/user/<username>', methods=['PATCH', 'POST'])
 def update_user(username:str) -> Response:
     """entrypoint que actualiza un usuario"""
+    #validacion de la cabecera de autenticacion
+    roles = check_auth_header(request.headers)
+    if roles is None:
+        return Response(status=401, response="Unauthorized")
     #validacion del cuerpo de la request
     body = request.get_json()
     valid = check_body(body)
     if not valid:
         return Response(status=400, response="Bad Request, missing parameters (username, password)")
-    #validacion de la cabecera de autenticacion
-    roles = check_auth_header(request.headers)
-    if roles is None:
-        return Response(status=401, response="Unauthorized")
     #validacion de los roles
     valid = check_roles(roles)
     username = request.json['username']
@@ -104,15 +104,20 @@ def update_user(username:str) -> Response:
     #actualizar usuario
     service = current_app.config['service']
     try:
-        status = service.update_password(request.json['password'], username)
+        status_pass = service.update_password(request.json['password'], username)
     except UserNotFoundException as e:
         return Response(status=404, response=str(e))
-    try:
-        status = service.update_role(username, request.json['role'])
-    except UserNotFoundException as e:
-        return Response(status=404, response=str(e))
-    if status:
-        return Response(status=204)
+
+    status_role = True
+    #miramos si hay rol en la request
+    if 'role' in request.json:
+        try:
+            status_role = service.update_role(username, request.json['role'])
+        except UserNotFoundException as e:
+            return Response(status=404, response=str(e))
+    if status_pass and status_role:
+        user = service.get_user(username)
+        return Response(status=200, response=user, content_type='application/json')
     return Response(response='{"error": "Internal server error"}',
                     status=500, content_type='application/json')
 

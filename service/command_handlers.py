@@ -16,7 +16,7 @@ def run_auth(host:str, port:int, db_route:str):
 
 def args_handler():
     """manejador de argumentos"""
-    db = os.getenv('STORAGE_FOLDER')
+    db = "storage"
     db_path = os.path.join(db, 'users.db')
     parser = argparse.ArgumentParser(description='Run the authentication service')
     parser.add_argument('--listening','-l', type=str,
@@ -32,7 +32,7 @@ def args_handler():
 def mock_app():
     """crea una aplicacion de flask para testear"""
     app = Flask(__name__, instance_relative_config=True)
-    app.config['service'] = AuthenticationService('users/users.db')
+    app.config['service'] = AuthenticationService('storage/users.db')
     app.config['TESTING'] = True
     app.register_blueprint(auth)
     return app

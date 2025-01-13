@@ -71,37 +71,37 @@ def test_get_user(api_client):
 def test_update_user(api_client):
     """test para el endpoint de update user"""
     headers = {"Content-Type": "application/json"}
-    response = api_client.patch('/auth/v1/user', headers=headers)
+    response = api_client.patch('/auth/v1/user/user', headers=headers)
     assert response.status_code == 401
 
     headers = {"Content-Type": "application/json","AuthToken":"test"}
-    response = api_client.patch('/auth/v1/user', headers=headers)
-    assert response.status_code == 400
-
-    headers = {"Content-Type": "application/json","AuthToken":"token_for_user"}
-    response = api_client.patch('/auth/v1/user', headers=headers)
-    assert response.status_code == 400
-
-    response = api_client.patch('/auth/v1/user',
-                                json={'username':'administrator', 'password':'patata'},
-                                headers=headers)
+    response = api_client.patch('/auth/v1/user/user', headers=headers)
     assert response.status_code == 401
 
-    response = api_client.patch('/auth/v1/user', json={'password':'pata'}, headers=headers)
+    headers = {"Content-Type": "application/json","AuthToken":"token_for_user"}
+    response = api_client.patch('/auth/v1/user/user', headers=headers)
     assert response.status_code == 400
 
-    response = api_client.patch('/auth/v1/user',
+    response = api_client.patch('/auth/v1/user/user',
+                                json={'username':'administrator', 'password':'patata'},
+                                headers=headers)
+    assert response.status_code == 403
+
+    response = api_client.patch('/auth/v1/user/user', json={'password':'pata'}, headers=headers)
+    assert response.status_code == 400
+
+    response = api_client.patch('/auth/v1/user/user',
                                 json={'username':'user', 'password':'patata'},
                                 headers=headers)
     assert response.status_code == 200
 
-    response = api_client.patch('/auth/v1/user',
+    response = api_client.patch('/auth/v1/user/user',
                                 json={'username':'user', 'password:':'patata','role':'admin'},
                                 headers=headers)
     assert response.status_code == 401
 
     headers = {"Content-Type": "application/json","AuthToken":"token_for_admin"}
-    response = api_client.patch('/auth/v1/user',
+    response = api_client.patch('/auth/v1/user/user',
                                 json={'username':'user', 'password':'patata','role':'admin'},
                                 headers=headers)
     assert response.status_code == 200
