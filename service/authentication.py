@@ -1,5 +1,5 @@
 """Importaciones"""
-#import os
+import os
 from typing import List
 import requests
 from flask import Blueprint, request, current_app, Response
@@ -8,7 +8,7 @@ from service.service import UserNotFoundException, Forbiden, UserAlreadyExists
 
 auth = Blueprint('auth', __name__)
 ROOT = "/auth/v1"
-TOKEN_ENDPOINT = "http://192.168.0.7:3002/api/v1/token"
+TOKEN_ENDPOINT = os.getenv('token_endpoint')
 
 @auth.route(ROOT + '/status', methods=['GET'])
 def get_status() -> Response:

@@ -9,8 +9,7 @@ def create_database(db_path:str):
     """
     username = 'administrator'
     #sacamos la variable de entorno para la contraseña
-    #password = os.getenv('ADMINPASS')
-    password = 'admin'
+    password = os.getenv('ADMINPASS')
     password = sha256(password.encode()).hexdigest()
     role = 'admin'
     authcode = sha256((username + password).encode()).hexdigest()
@@ -32,8 +31,7 @@ def bootstrap():
     """
     funcion para crear la base de datos
     """
-    #db_folder = os.getenv('STORAGE_FOLDER')
-    db_folder = 'storage'
+    db_folder = os.getenv('STORAGE_FOLDER')
     #miramos si no existe la carpeta users
     if not os.path.exists(db_folder):
         os.makedirs(db_folder)
