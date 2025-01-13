@@ -112,10 +112,7 @@ def update_user(username:str) -> Response:
     status_role = True
     #miramos si hay rol en la request
     if 'role' in request.json:
-        try:
-            status_role = service.update_role(username, request.json['role'])
-        except UserNotFoundException as e:
-            return Response(status=404, response=str(e))
+        status_role = service.update_role(username, request.json['role'])
     if status_pass and status_role:
         user = service.get_user(username)
         return Response(status=200, response=user, content_type='application/json')
