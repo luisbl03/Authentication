@@ -21,7 +21,6 @@ COPY service/authentication.py /app/service/authentication.py
 COPY service/db_manager.py /app/service/db_manager.py
 COPY service/service.py /app/service/service.py
 COPY service/user.py /app/service/user.py
-COPY bootstrap.py /app/bootstrap.py
 COPY requirements.txt /app/requirements.txt
 COPY pyproject.toml /app/pyproject.toml
 
@@ -29,8 +28,6 @@ RUN python3 -m venv venv
 RUN venv/bin/pip install -r requirements.txt
 EXPOSE 3001
 
-
-RUN python3 bootstrap.py
 RUN chown -R user:user /app
 RUN venv/bin/pip install -e .
 USER user
