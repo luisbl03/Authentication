@@ -16,6 +16,7 @@ class DBManager:
         except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
         sqlite3.DatabaseError,
         sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            conn.close()
             return None
         user = cursor.fetchone()
         conn.close()
@@ -30,6 +31,7 @@ class DBManager:
         except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
         sqlite3.DatabaseError,
         sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            conn.close()
             return None
         roles= cursor.fetchone()
         conn.close()
@@ -45,8 +47,10 @@ class DBManager:
                 "INSERT INTO users (username, password, role, authCode) VALUES (?, ?, ?, ?)",
             (username, password, role, auth_code))
         except sqlite3.IntegrityError:
+            conn.close()
             return -1
         except (sqlite3.OperationalError, sqlite3.ProgrammingError, sqlite3.DatabaseError):
+            conn.close()
             return -2
         conn.commit()
         conn.close()
@@ -63,6 +67,7 @@ class DBManager:
         except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
         sqlite3.DatabaseError,
         sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            conn.close()
             return False
         conn.commit()
         conn.close()
@@ -77,6 +82,7 @@ class DBManager:
         except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
         sqlite3.DatabaseError,
         sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            conn.close()
             return False
         conn.commit()
         conn.close()
@@ -91,9 +97,11 @@ class DBManager:
         except (sqlite3.IntegrityError, sqlite3.OperationalError, sqlite3.ProgrammingError,
         sqlite3.DatabaseError,
         sqlite3.DataError, sqlite3.InterfaceError, sqlite3.NotSupportedError):
+            conn.close()
             return False
         rows = cursor.rowcount
         if rows == 0:
+            conn.close()
             return None
         conn.commit()
         conn.close()
