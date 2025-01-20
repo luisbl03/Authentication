@@ -22,22 +22,23 @@ def add_user() -> Response:
     #validacion del cuerpo de la request
     valid = check_body(body)
     if not valid:
-        return Response(status=400, response="Bad Request, missing parameters (username, password)")
+        return Response(status=400,
+                response='{"error":"Bad Request, missing parameters (username, password, role)"}')
     #validacion de la cabecera de autenticacion
     roles = check_auth_header(request.headers)
     if roles is None:
-        return Response(status=401, response="Unauthorized")
+        return Response(status=401, response='{"error": "Unauthorized"}')
     #validacion de los roles
     valid = check_roles(roles)
     if not valid:
-        return Response(status=401, response="Forbidden")
+        return Response(status=401, response='{"error": "Unauthorized"}')
     #agregar usuario
     service = current_app.config['service']
     try:
         username, role = service.add_user(request.json['username'],
         request.json['password'], request.json['role'])
-    except (UserAlreadyExists,KeyError, Forbiden)as e:
-        return Response(status=409, response=str(e))
+    except (UserAlreadyExists, KeyError, Forbiden) as e:
+        return Response(status=409, response=f'{{"error": "{str(e)}"}}')
     if username is None:
         return Response(response='{"error": "Internal server error"}',
                         status=500, content_type='application/json')
@@ -50,13 +51,13 @@ def get_user(username:str) -> Response:
     #validacion de la cabecera de autenticacion
     roles = check_auth_header(request.headers)
     if roles is None:
-        return Response(status=401, response="Unauthorized")
+        return Response(status=401, response='{"error": "Unauthorized"}')
     #obtener usuario
     service = current_app.config['service']
     try:
         user = service.get_user(username)
     except UserNotFoundException as e:
-        return Response(status=404, response=str(e))
+        return Response(status=404, response=f'{{"error": "{str(e)}"}}')
     return Response(response=user, status=200, content_type='application/json')
 
 @auth.route(ROOT + '/user/<username>', methods=['DELETE'])
@@ -65,19 +66,19 @@ def delete_user(username:str) -> Response:
     #validacion de la cabecera de autenticacion
     roles = check_auth_header(request.headers)
     if roles is None:
-        return Response(status=401, response="Unauthorized")
+        return Response(status=401, response='{"error": "Unauthorized"}')
     #validacion de los roles
     valid = check_roles(roles)
     if not valid:
         #miramos si el usuario que esta borrando es el suyo
         if username != get_usertoken(request.headers):
-            return Response(status=401, response="Unauthorized")
+            return Response(status=401, response='{"error": "Unauthorized"}')
     #eliminar usuario
     service = current_app.config['service']
     try:
         status = service.delete_user(username)
     except UserNotFoundException as e:
-        return Response(status=404, response=str(e))
+        return Response(status=404, response=f'{{"error": "{str(e)}"}}')
     if status:
         return Response(status=204)
     return Response(response='{"error": "Internal server error"}',
@@ -89,25 +90,26 @@ def update_user(username:str) -> Response:
     #validacion de la cabecera de autenticacion
     roles = check_auth_header(request.headers)
     if roles is None:
-        return Response(status=401, response="Unauthorized")
+        return Response(status=401, response='{"error": "Unauthorized"}')
     #validacion del cuerpo de la request
     body = request.get_json()
     valid = check_body(body)
     if not valid:
-        return Response(status=400, response="Bad Request, missing parameters (username, password)")
+        return Response(status=400,
+                response='{"error":"Bad Request, missing parameters (username, password)"}')
     #validacion de los roles
     valid = check_roles(roles)
     username = request.json['username']
     if not valid:
         #solo tiene permiso para tocar su usuario
         if username != get_usertoken(request.headers):
-            return Response(status=401, response="Unauthorized")
+            return Response(status=401, response='{"error": "Unauthorized"}')
     #actualizar usuario
     service = current_app.config['service']
     try:
         status_pass = service.update_password(request.json['password'], username)
     except UserNotFoundException as e:
-        return Response(status=404, response=str(e))
+        return Response(status=404, response={"error": str(e)})
 
     status_role = True
     #miramos si hay rol en la request
