@@ -49,8 +49,7 @@ class AuthenticationService:
             return user.getusername(), user.getrole()
         if code == -1:
             raise UserAlreadyExists(user.getusername())
-
-        return None
+        return None,None
 
     def update_password(self, password:str, username:str) -> bool:
         """Funcion que actualiza la contraseña de un usuario"""
