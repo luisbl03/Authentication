@@ -96,7 +96,7 @@ def update_user(username:str) -> Response:
     valid = check_body(body)
     if not valid:
         return Response(status=400,
-                response='{"error":"Bad Request, missing parameters (username, password)"}')
+                response='{"error":"Bad Request, missing parameters (username, password, role)"}')
     #validacion de los roles
     valid = check_roles(roles)
     username = request.json['username']
